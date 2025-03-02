@@ -5,10 +5,8 @@ from pathlib import Path
 import time
 import sys
 import re 
-import textwrap
-import pytesseract
-import cv2
 
+start_time = 0;
 
 def show_progress(block_num, block_size, total_size):
     global start_time
@@ -45,21 +43,6 @@ def download_images(pid, output_dir):
             print("Download completed or no more pages to fetch.")
             return images
 
-def font_recognize(img):
-    url = "https://api.myfonts.net/v2/identify"
-    response = requests.post(url, files=img)
-
-    if response.status_code == 200:
-        print("font:", response.json())
-    else:
-        print("font. Error:", response.status_code)
-
-def text_recognize(img):
-    data = pytesseract.image_to_data(img, lang="en") 
-    boxes = len(data['level'])
-    for i in range(boxes):
-        (x, y, w, h, text) = (data['left'][i], data['top'][i], data['width'][i], data['height'][i], data['text'][i])
-        draw.text((x, y), text, fill="white", font=font_recognize(img))
 
 def images_to_pdf(images, output_dir):
     pdf_path = os.path.join(output_dir, "document.pdf")
@@ -95,5 +78,4 @@ if __name__ == "__main__":
     images = download_images(pid, "Downloads")
     
     if images:
-        text_recognize(images[0])
         images_to_pdf(images, output_dir)
